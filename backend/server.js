@@ -21,7 +21,7 @@ app.use(cors());
 // Connect Database
 connectDB();
 
-// បន្ទាត់កូដថ្មី
+// បន្ទាត់កូដថ្មីសម្រាប់
 app.use(express.static(path.join(__dirname, "public")));
 // Set up API Routes
 app.use("/api", authRoutes);

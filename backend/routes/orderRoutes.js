@@ -1,15 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const {
-  createOrder,
-  payConfirm,
-  checkStatus,
-  getUserOrders,
-} = require("../controllers/orderController");
+const orderController = require("../controllers/orderController");
 
-router.post("/create-order", createOrder);
-router.post("/pay-confirm", payConfirm);
-router.get("/check-status/:orderId", checkStatus);
-router.get("/orders/:username", getUserOrders);
+router.post("/create-order", orderController.createOrder);
+router.post("/pay-confirm", orderController.payConfirm);
+router.get("/check-status/:orderId", orderController.checkStatus);
+router.get("/orders/:username", orderController.getUserOrders);
 
 module.exports = router;

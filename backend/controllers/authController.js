@@ -1,8 +1,6 @@
+const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-
-const SECRET_KEY = process.env.SECRET_KEY || "FASHION_SHOP_SECRET";
 
 exports.register = async (req, res) => {
   try {
@@ -15,11 +13,12 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Username already exists!" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({ username, password: hashedPassword });
+    const newUser = new User({ username, password: hashedPassword });
+    await newUser.save();
 
     res.status(201).json({ success: true, message: "Register success!" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -29,9 +28,11 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ username });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ username: user.username }, SECRET_KEY, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign(
+        { username: user.username },
+        process.env.SECRET_KEY,
+        { expiresIn: "1h" },
+      );
       res.json({ success: true, token, username: user.username });
     } else {
       res
@@ -39,6 +40,6 @@ exports.login = async (req, res) => {
         .json({ success: false, message: "Invalid username or password!" });
     }
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
